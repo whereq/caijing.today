@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node / frontend
+node_modules/
+dist/
+*.local
+
+# Editors / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Design work — keep the zip, ignore the extracted working copy
+design/extracted/
+*.zip:Zone.Identifier

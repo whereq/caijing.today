@@ -1,0 +1,55 @@
+# =============================================================================
+# caijing.today — Production Docker Compose
+# =============================================================================
+# The shared PostgreSQL and whereq-network are owned by flowdesk.top. Start the
+# db first (once), then this app stack:
+#   cd ../flowdesk.top && docker compose -f docker/docker-compose.postgres.yml up -d
+#   docker compose -f docker/docker-compose.yml up -d --build
+#
+# caijing.today shares the database + collector with flowdesk.top; this stack is
+# read API + GUI only. Host ports offset from flowdesk (api 8001, web 8082).
+# =============================================================================
+
+name: caijing
+
+networks:
+  whereq-network:
+    external: true
+
+services:
+  caijing-api:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    image: caijing-api
+    container_name: caijing-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-flowdesk}:${POSTGRES_PASSWORD_ENCODED:-flowdesk}@whereq-db:5432/${POSTGRES_DB:-flowdesk}
+      CORS_ORIGINS: '["https://caijing.today", "https://www.caijing.today"]'
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-https://www.keytomarvel.com}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-caijing.today}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing-spa}
+      SEED_FALLBACK_ENABLED: ${SEED_FALLBACK_ENABLED:-false}
+    ports:
+      - "8001:8000"
+    networks:
+      - whereq-network
+
+  caijing-frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        VITE_KEYCLOAK_URL: ${KEYCLOAK_URL:-https://www.keytomarvel.com}
+        VITE_KEYCLOAK_REALM: ${KEYCLOAK_REALM:-caijing.today}
+        VITE_KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing-spa}
+    image: caijing-frontend
+    container_name: caijing-frontend
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    networks:
+      - whereq-network
+    depends_on:
+      - caijing-api

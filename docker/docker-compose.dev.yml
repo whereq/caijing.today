@@ -1,0 +1,78 @@
+# =============================================================================
+# caijing.today — Development Docker Compose
+# =============================================================================
+# Prerequisites: the shared PostgreSQL (owned by flowdesk.top's
+# docker-compose.postgres.yml) and the whereq-network must already be running:
+#   cd ../flowdesk.top && docker compose -f docker/docker-compose.postgres.yml up -d
+#
+# Usage (from this repo root):
+#   docker compose -f docker/docker-compose.dev.yml up -d
+#   docker compose -f docker/docker-compose.dev.yml down
+#
+# Notes:
+#   - No db and no collector here. caijing.today SHARES both with flowdesk.top:
+#     the collector (in the flowdesk repo) populates the news tables; this stack
+#     only reads them and serves the caijing GUI.
+#   - Host ports are offset from flowdesk (api 8001, frontend 5174) so both
+#     apps can run on the same host without colliding.
+# =============================================================================
+
+name: caijing-dev
+
+networks:
+  # Shared network created and owned by flowdesk.top's docker-compose.postgres.yml.
+  whereq-network:
+    external: true
+
+services:
+  # ---------------------------------------------------------------------------
+  # API Layer (read-only against the shared DB)
+  # ---------------------------------------------------------------------------
+  caijing-api:
+    build:
+      context: ..
+      dockerfile: docker/api/Dockerfile.dev
+    image: caijing-api-dev
+    container_name: caijing-api
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-flowdesk}:${POSTGRES_PASSWORD_ENCODED:-flowdesk}@whereq-db:5432/${POSTGRES_DB:-flowdesk}
+      CORS_ORIGINS: '["http://localhost:5174", "http://localhost:3000", "https://caijing.today", "https://www.caijing.today"]'
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-https://www.keytomarvel.com}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-caijing.today}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing-spa}
+      SEED_FALLBACK_ENABLED: ${SEED_FALLBACK_ENABLED:-true}
+    volumes:
+      - ../backend/caijing:/app/caijing:cached
+      - ../backend/api:/app/api:cached
+    ports:
+      - "8001:8000"
+    networks:
+      - whereq-network
+
+  # ---------------------------------------------------------------------------
+  # Frontend Layer (Vite dev server, hot reload)
+  # ---------------------------------------------------------------------------
+  caijing-frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend/Dockerfile.dev
+    image: caijing-frontend-dev
+    container_name: caijing-frontend
+    environment:
+      VITE_KEYCLOAK_URL: ${KEYCLOAK_URL:-https://www.keytomarvel.com}
+      VITE_KEYCLOAK_REALM: ${KEYCLOAK_REALM:-caijing.today}
+      VITE_KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing-spa}
+    volumes:
+      - ../frontend/src:/app/src:cached
+      - ../frontend/public:/app/public:cached
+      - ../frontend/index.html:/app/index.html:cached
+      - ../frontend/vite.config.ts:/app/vite.config.ts:cached
+      - ../frontend/tsconfig.json:/app/tsconfig.json:cached
+      - ../frontend/tsconfig.node.json:/app/tsconfig.node.json:cached
+      - ../frontend/eslint.config.js:/app/eslint.config.js:cached
+    ports:
+      - "5174:5173"
+    networks:
+      - whereq-network
+    depends_on:
+      - caijing-api
