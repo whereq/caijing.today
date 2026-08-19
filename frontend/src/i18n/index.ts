@@ -9,8 +9,9 @@ const LOCALE_KEY = 'Caijing_locale'
 function getInitialLocale(): string {
   const stored = lsGet(LOCALE_KEY)
   if (stored && ['en', 'zh'].includes(stored)) return stored
-  const browser = navigator.language.toLowerCase()
-  return browser.startsWith('zh') ? 'zh' : 'en'
+  // Chinese-first brand (财经今日): Chinese is the default UI language for every
+  // first-time visitor. English is a secondary, toggleable + persisted choice.
+  return 'zh'
 }
 
 i18n.use(initReactI18next).init({
