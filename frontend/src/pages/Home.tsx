@@ -29,12 +29,29 @@ export default function Home() {
     </div>
   )
 
+  // Medium/mobile: single stacked side column (keeps Trending here).
   const Side = (
     <div style={{ ...col }}>
       <FlashFeed />
       <TrendingBox />
       <CalendarBox />
       <GlobalMarkets twoColumn={!mobile && !wide} />
+    </div>
+  )
+
+  // Wide: Trending moves under Hot on the LEFT so the two outer columns balance;
+  // the right column keeps Flash + Calendar + Global (all height-capped/scrollable).
+  const WideLeft = (
+    <div style={{ ...col }}>
+      <HotRanking maxHeight={620} />
+      <TrendingBox maxHeight={150} />
+    </div>
+  )
+  const WideRight = (
+    <div style={{ ...col }}>
+      <FlashFeed maxHeight={300} />
+      <CalendarBox maxHeight={300} />
+      <GlobalMarkets maxHeight={220} />
     </div>
   )
 
@@ -48,9 +65,9 @@ export default function Home() {
         </div>
       ) : wide ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px,1.1fr) minmax(0,2.4fr) minmax(300px,1.1fr)', gap: 10, alignItems: 'start' }}>
-          <HotRanking maxHeight={760} />
+          {WideLeft}
           {Mid}
-          {Side}
+          {WideRight}
         </div>
       ) : (
         <>

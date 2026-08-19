@@ -5,7 +5,7 @@ import { api } from '../../api/client'
 import { useClock } from '../../lib/hooks'
 import { isCn } from '../../lib/format'
 
-export default function CalendarBox() {
+export default function CalendarBox({ maxHeight = 420 }: { maxHeight?: number }) {
   const { t, i18n } = useTranslation()
   const cn = isCn(i18n.language)
   const { today } = useClock()
@@ -14,7 +14,7 @@ export default function CalendarBox() {
   return (
     <Panel>
       <SectionHeader accent="var(--down)" title={t('nav.calendar')} right={<span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 10, color: 'var(--tx3)' }}>{today}</span>} />
-      <div style={{ maxHeight: 420, overflowY: 'auto' }}>
+      <div style={{ maxHeight, overflowY: 'auto' }}>
         {(data ?? []).map((e, i) => {
           const starColor = e.importance === 3 ? 'var(--up)' : e.importance === 2 ? 'var(--amber)' : 'var(--tx3)'
           const fc = e.forecast && !['nan', 'none', 'null', '—'].includes(e.forecast.trim().toLowerCase()) ? e.forecast : '—'
