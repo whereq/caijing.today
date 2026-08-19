@@ -6,8 +6,9 @@
 #   cd ../flowdesk.top && docker compose -f docker/docker-compose.postgres.yml up -d
 #   docker compose -f docker/docker-compose.yml up -d --build
 #
-# caijing.today shares the database + collector with flowdesk.top; this stack is
-# read API + GUI only. Host ports offset from flowdesk (api 8001, web 8082).
+# caijing.today shares the database + collector with the whereq data platform;
+# this stack is read API + GUI only. Host ports 8004 (api) / 8084 (web) were
+# chosen to avoid conflicts on the shared server (verify before deploying).
 # =============================================================================
 
 name: caijing
@@ -32,7 +33,7 @@ services:
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing-spa}
       SEED_FALLBACK_ENABLED: ${SEED_FALLBACK_ENABLED:-false}
     ports:
-      - "8001:8000"
+      - "8004:8000"
     networks:
       - whereq-network
 
@@ -48,7 +49,7 @@ services:
     container_name: caijing-frontend
     restart: unless-stopped
     ports:
-      - "8082:80"
+      - "8084:80"
     networks:
       - whereq-network
     depends_on:

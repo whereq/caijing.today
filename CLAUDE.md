@@ -41,7 +41,7 @@ ruff check .
 # Full stack via Docker (from repo root). Requires flowdesk's shared db + network:
 #   cd ../flowdesk.top && docker compose -f docker/docker-compose.postgres.yml up -d
 docker compose -f docker/docker-compose.dev.yml up -d      # api :8001, frontend :5174
-docker compose -f docker/docker-compose.yml up -d --build  # prod: api :8001, web :8082
+docker compose -f docker/docker-compose.yml up -d --build  # prod: api :8004, web :8084
 ```
 
 Host ports are offset from flowdesk (api **8001**, dev web **5174**, prod web **8082**) so both apps coexist on the shared host.

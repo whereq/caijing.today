@@ -36,8 +36,8 @@ PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 COMPOSE_FILE="${PROJECT_ROOT}/docker/docker-compose.yml"
 API_CONTAINER="caijing-api"
 FRONTEND_CONTAINER="caijing-frontend"
-API_HEALTH_URL="http://localhost:8001/api/v1/health"   # api host port (see compose)
-WEB_URL="http://localhost:8082"                        # frontend host port (tunnel target)
+API_HEALTH_URL="http://localhost:8004/api/v1/health"   # api host port (see compose)
+WEB_URL="http://localhost:8084"                        # frontend host port (tunnel target)
 
 MODE="full"; BRANCH="main"; DO_PULL=true; DRY_RUN=false
 
