@@ -19,9 +19,9 @@ class Settings(BaseSettings):
 
     # Keycloak / JWT (public client — SPA). caijing.today has its own realm on the
     # shared KeyToMarvel.com Keycloak server.
-    keycloak_url: str = "https://www.keytomarvel.com"
-    keycloak_realm: str = "caijing.today"
-    keycloak_client_id: str = "caijing-spa"
+    keycloak_url: str = "https://keytomarvel.com"
+    keycloak_realm: str = "caijing.today-realm"
+    keycloak_client_id: str = "caijing.today-spa"
 
     # API settings
     api_host: str = "0.0.0.0"

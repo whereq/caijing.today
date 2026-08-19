@@ -28,9 +28,9 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-flowdesk}:${POSTGRES_PASSWORD_ENCODED:-flowdesk}@whereq-db:5432/${POSTGRES_DB:-flowdesk}
       CORS_ORIGINS: '["https://caijing.today", "https://www.caijing.today"]'
-      KEYCLOAK_URL: ${KEYCLOAK_URL:-https://www.keytomarvel.com}
-      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-caijing.today}
-      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing-spa}
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-https://keytomarvel.com}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-caijing.today-realm}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing.today-spa}
       SEED_FALLBACK_ENABLED: ${SEED_FALLBACK_ENABLED:-false}
     ports:
       - "8004:8000"
@@ -42,9 +42,9 @@ services:
       context: ..
       dockerfile: docker/frontend/Dockerfile
       args:
-        VITE_KEYCLOAK_URL: ${KEYCLOAK_URL:-https://www.keytomarvel.com}
-        VITE_KEYCLOAK_REALM: ${KEYCLOAK_REALM:-caijing.today}
-        VITE_KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing-spa}
+        VITE_KEYCLOAK_URL: ${KEYCLOAK_URL:-https://keytomarvel.com}
+        VITE_KEYCLOAK_REALM: ${KEYCLOAK_REALM:-caijing.today-realm}
+        VITE_KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-caijing.today-spa}
     image: caijing-frontend
     container_name: caijing-frontend
     restart: unless-stopped
