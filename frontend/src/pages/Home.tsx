@@ -1,6 +1,7 @@
 import { useWindowWidth } from '../lib/hooks'
 import HotRanking from '../components/home/HotRanking'
 import EditorPicks from '../components/home/EditorPicks'
+import HotStocks from '../components/home/HotStocks'
 import MiniCharts from '../components/home/MiniCharts'
 import CategoryTiles from '../components/home/CategoryTiles'
 import SectorHeatmap from '../components/home/SectorHeatmap'
@@ -23,6 +24,7 @@ export default function Home() {
     <div style={{ ...col }}>
       <EditorPicks />
       <MiniCharts />
+      <HotStocks maxHeight={520} />
       <CategoryTiles />
       <SectorHeatmap />
       <CryptoZone />

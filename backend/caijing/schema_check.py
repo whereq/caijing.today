@@ -40,6 +40,7 @@ MIRRORED_MODELS = [
     models.CjMarketMetric,
     models.CjEconEvent,
     models.CjTrendingKeyword,
+    models.CjHotStock,  # finance 热榜; skipped by the guard until the collector deploys it
     models.CjNewsFeed,  # a VIEW; skipped by the guard until it is deployed
 ]
 

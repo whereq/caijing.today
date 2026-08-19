@@ -193,6 +193,35 @@ class CjTrendingKeyword(Base):
     updated_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
 
+class CjHotStock(Base):
+    """Finance hot-ranking (个股热榜) — one snapshot batch per fetch cycle.
+
+    Written by **whereq-collector**, which aggregates external finance hot-lists
+    (雪球 人气/热帖, 东方财富 股吧人气榜, 财联社 热门) and/or a native decayed heat
+    score into a normalized 0–100 `heat`. caijing reads the latest `as_of`
+    snapshot, ordered by `rank`. Until the table is deployed the read side simply
+    returns [] (the panel hides), so shipping it is a no-downtime switch.
+    """
+
+    __tablename__ = "cj_hot_stock"
+    __table_args__ = _ARGS
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    as_of: Mapped[datetime] = mapped_column(DateTime)          # snapshot batch instant (naive UTC)
+    rank: Mapped[Optional[int]] = mapped_column(Integer)
+    symbol: Mapped[Optional[str]] = mapped_column(String)      # 600519 | 00700 | AAPL
+    name_cn: Mapped[Optional[str]] = mapped_column(String)
+    name_en: Mapped[Optional[str]] = mapped_column(String)
+    market: Mapped[Optional[str]] = mapped_column(String)      # cn | hk | us
+    heat: Mapped[Optional[float]] = mapped_column(Float)       # normalized 0–100
+    change_pct: Mapped[Optional[float]] = mapped_column(Float)  # price change %
+    price: Mapped[Optional[str]] = mapped_column(String)       # pre-formatted display (optional)
+    source: Mapped[Optional[str]] = mapped_column(String)      # xueqiu | eastmoney | cls | blended
+    trend: Mapped[Optional[int]] = mapped_column(SmallInteger)  # 1 new / 0 steady / -1 cooling
+    url: Mapped[Optional[str]] = mapped_column(Text)
+    updated_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+
+
 class CjNewsFeed(Base):
     """Read-only mirror of the `cj_news_feed` VIEW.
 

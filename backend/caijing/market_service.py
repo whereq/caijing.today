@@ -20,6 +20,7 @@ from caijing.models import (
     CjCryptoCoin,
     CjCryptoListing,
     CjEconEvent,
+    CjHotStock,
     CjMarketMetric,
     CjMarketQuote,
     CjSectorHeat,
@@ -32,6 +33,7 @@ from api.schemas.market import (
     Coin,
     CryptoBundle,
     CryptoStat,
+    HotStock,
     Keyword,
     NewToken,
     Quote,
@@ -186,3 +188,29 @@ async def get_keywords(db: AsyncSession) -> list[Keyword]:
     if rows is None:
         return []
     return [Keyword(cn=r.keyword_cn or "", en=r.keyword_en or "") for r in rows]
+
+
+async def get_hot_stocks(db: AsyncSession, limit: int = 50) -> list[HotStock]:
+    """Finance 热榜: the latest snapshot batch, ranked. Empty until the collector
+    deploys `cj_hot_stock` (missing table → DB error → [] → the panel hides)."""
+    try:
+        latest = (await db.execute(select(func.max(CjHotStock.as_of)))).scalar_one_or_none()
+    except Exception as exc:  # noqa: BLE001 - table not deployed yet / DB down
+        logger.warning("hot-stock max(as_of) query failed: %s", exc)
+        return []
+    if latest is None:
+        return []  # reachable but no snapshot yet — render nothing
+    rows = await _rows(
+        db,
+        select(CjHotStock).where(CjHotStock.as_of == latest).order_by(CjHotStock.rank).limit(limit),
+    )
+    if rows is None:
+        return []
+    return [
+        HotStock(
+            rank=r.rank or 0, symbol=r.symbol or "", name_cn=r.name_cn or "", name_en=r.name_en or "",
+            market=r.market or "", heat=r.heat or 0.0, change_pct=r.change_pct or 0.0,
+            trend=r.trend or 0, url=r.url,
+        )
+        for r in rows
+    ]

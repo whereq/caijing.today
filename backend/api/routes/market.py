@@ -13,6 +13,7 @@ from api.schemas.market import (
     CalendarEvent,
     Chart,
     CryptoBundle,
+    HotStock,
     Keyword,
     Quote,
     SectorHeat,
@@ -50,6 +51,11 @@ async def calendar(db: AsyncSession = Depends(get_db)):
 @router.get("/keywords", response_model=list[Keyword])
 async def keywords(db: AsyncSession = Depends(get_db)):
     return await market_service.get_keywords(db)
+
+
+@router.get("/hotstocks", response_model=list[HotStock])
+async def hotstocks(db: AsyncSession = Depends(get_db)):
+    return await market_service.get_hot_stocks(db)
 
 
 @router.get("/sources", response_model=list[SourceInfo])

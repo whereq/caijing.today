@@ -83,6 +83,18 @@ class Keyword(BaseModel):
     en: str
 
 
+class HotStock(BaseModel):
+    rank: int
+    symbol: str
+    name_cn: str
+    name_en: str
+    market: str  # cn | hk | us
+    heat: float  # normalized 0–100
+    change_pct: float
+    trend: int  # 1 new / 0 steady / -1 cooling
+    url: str | None = None
+
+
 class SourceInfo(BaseModel):
     name_cn: str
     name_en: str

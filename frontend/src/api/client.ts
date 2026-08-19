@@ -87,6 +87,7 @@ export interface CryptoBundle { coins: Coin[]; stats: CryptoStat[]; chains: Chai
 export interface CalendarEvent { time: string; importance: number; name_cn: string; name_en: string; forecast: string }
 export interface Keyword { cn: string; en: string }
 export interface SourceInfo { name_cn: string; name_en: string; region: string }
+export interface HotStock { rank: number; symbol: string; name_cn: string; name_en: string; market: string; heat: number; change_pct: number; trend: number; url?: string | null }
 
 export type RangeKey = '1h' | '24h' | '7d' | '30d'
 
@@ -123,4 +124,5 @@ export const api = {
   getCalendar: async (): Promise<CalendarEvent[]> => (await apiClient.get<CalendarEvent[]>('/market/calendar')).data,
   getKeywords: async (): Promise<Keyword[]> => (await apiClient.get<Keyword[]>('/market/keywords')).data,
   getSources: async (): Promise<SourceInfo[]> => (await apiClient.get<SourceInfo[]>('/market/sources')).data,
+  getHotStocks: async (): Promise<HotStock[]> => (await apiClient.get<HotStock[]>('/market/hotstocks')).data,
 }
