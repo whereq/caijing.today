@@ -5,6 +5,7 @@ import { useTheme } from '../contexts/ThemeContext'
 import { CATS } from '../lib/categories'
 import { isCn } from '../lib/format'
 import Ticker from './Ticker'
+import UserMenu from './UserMenu'
 
 const btn: CSSProperties = {
   height: 52, minWidth: 46, padding: '0 12px', background: 'none', border: 0,
@@ -64,11 +65,13 @@ export default function Header({
           <button onClick={toggleLang} style={{ ...btn, fontSize: 11, fontWeight: 600, fontFamily: "'IBM Plex Mono',monospace" }} data-hoverbg>
             {cn ? 'EN' : '中文'}
           </button>
-          <button onClick={toggleTheme} style={{ ...btn, borderRight: mobile ? '1px solid var(--bd)' : 0 }} data-hoverbg>
+          <button onClick={toggleTheme} style={{ ...btn, borderRight: '1px solid var(--bd)' }} data-hoverbg>
             {theme === 'dark' ? '◐' : '◑'}
           </button>
-          {mobile && (
+          {mobile ? (
             <button onClick={onToggleDrawer} style={{ ...btn, borderRight: 0, fontSize: 19, color: 'var(--tx)' }} data-hoverbg>≡</button>
+          ) : (
+            <UserMenu />
           )}
         </div>
       </div>

@@ -1,16 +1,23 @@
 import { createContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import keycloak from './keycloak'
+import { resolveAvatarValue } from '../utils/avatars'
 
 interface AuthContextValue {
   isAuthenticated: boolean
   token: string | undefined
   username: string | undefined
   displayName: string | undefined
+  avatar: string | undefined
   roles: string[]
   isAdmin: boolean
   login: () => void
   register: () => void
   logout: () => void
+}
+
+function ssoAvatar(tokenParsed: Record<string, unknown> | undefined): string | undefined {
+  const raw = (tokenParsed?.['avatar'] ?? tokenParsed?.['picture']) as string | undefined
+  return resolveAvatarValue(raw) ?? undefined
 }
 
 function extractRoles(tokenParsed: Record<string, unknown> | undefined): string[] {
@@ -39,6 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [displayName, setDisplayName] = useState<string | undefined>(() =>
     buildDisplayName(keycloak.tokenParsed, keycloak.tokenParsed?.['preferred_username'] as string | undefined),
   )
+  const [avatar, setAvatar] = useState<string | undefined>(() => ssoAvatar(keycloak.tokenParsed))
   const [roles, setRoles] = useState<string[]>(() => extractRoles(keycloak.tokenParsed))
   const refreshTimer = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -52,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setToken(keycloak.token)
           setUsername(newUsername)
           setDisplayName(buildDisplayName(keycloak.tokenParsed, newUsername))
+          setAvatar(ssoAvatar(keycloak.tokenParsed))
           setRoles(extractRoles(keycloak.tokenParsed))
         }
       } catch {
@@ -59,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(undefined)
         setUsername(undefined)
         setDisplayName(undefined)
+        setAvatar(undefined)
         setRoles([])
       }
     }, 60_000)
@@ -74,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, token, username, displayName, roles, isAdmin, login, register, logout }}
+      value={{ isAuthenticated, token, username, displayName, avatar, roles, isAdmin, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>

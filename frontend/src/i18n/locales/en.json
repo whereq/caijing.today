@@ -52,5 +52,5 @@
     "api": "API",
     "contact": "Contact"
   },
-  "auth": { "signIn": "Sign in", "signUp": "Sign up", "signOut": "Sign out" }
+  "auth": { "signIn": "Sign in", "signUp": "Sign up", "signOut": "Sign out", "signedIn": "Signed in", "browsingAsGuest": "Browsing as guest", "guest": "Guest", "admin": "Administrator" }
 }

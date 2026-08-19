@@ -52,5 +52,5 @@
     "api": "API",
     "contact": "联系"
   },
-  "auth": { "signIn": "登录", "signUp": "注册", "signOut": "退出" }
+  "auth": { "signIn": "登录", "signUp": "注册", "signOut": "退出", "signedIn": "已登录", "browsingAsGuest": "访客浏览中", "guest": "访客", "admin": "管理员" }
 }
